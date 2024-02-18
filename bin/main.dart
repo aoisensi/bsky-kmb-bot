@@ -5,6 +5,7 @@ import 'package:bluesky/bluesky.dart' as bluesky;
 import 'package:bluesky_text/bluesky_text.dart';
 import 'package:cron/cron.dart';
 import 'package:http/http.dart' as http;
+import 'package:fullwidth_halfwidth_converter/fullwidth_halfwidth_converter.dart';
 
 late final String myDid;
 late final bluesky.Bluesky bsky;
@@ -86,6 +87,25 @@ final repoCommitAdapter = bluesky.RepoCommitAdaptor(
       );
       print("Posted ${post.data.uri}");
     }
+    // chekc is kmb related post
+    {
+      final text = data.record.text
+          .toHalfwidth(
+            convertSymbol: true,
+            convertAlphabet: true,
+            convertNumber: true,
+            convertKana: false,
+          )
+          .toLowerCase();
+      for (final favorite in favorites) {
+        if (text.contains(favorite)) {
+          print("Favorite found");
+          await bsky.feed.like(cid: data.cid, uri: data.uri);
+          print("Liked ${data.uri}");
+          break;
+        }
+      }
+    }
   },
 );
 
@@ -153,6 +173,30 @@ final majires = [
   "何いきなり飛び込んでるの！",
   "何言ってんの。もうお金も払ったし。",
   "いきなりヒーローとか何言ってんの？…大丈夫？",
+];
+
+final favorites = [
+  "きるみー",
+  "キルミー",
+  "killmebaby",
+  "kill me baby",
+  "kmb",
+  "やすな",
+  "ヤスナ",
+  "そーにゃ",
+  "ソーニャ",
+  "あぎり",
+  "アギリ",
+  "没キャラ",
+  "没きゃら",
+  "愛殺寶貝",
+  "686",
+  "六八六",
+  "六百八十六",
+  "六百八拾六",
+  "dclxxxvi",
+  "わさわさ",
+  "ワサワサ",
 ];
 
 final i686 = [

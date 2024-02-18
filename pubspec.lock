@@ -201,6 +201,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+  fullwidth_halfwidth_converter:
+    dependency: "direct main"
+    description:
+      name: fullwidth_halfwidth_converter
+      sha256: d2c8fcc613135cfe8c438e8a772844b1a7bb87a3edd4b091db7b65a625df37dd
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   glob:
     dependency: transitive
     description:

@@ -10,6 +10,7 @@ dependencies:
   bluesky: ^0.15.7
   bluesky_text: ^0.6.8
   cron: ^0.6.0
+  fullwidth_halfwidth_converter: ^1.0.2
   http: ^1.2.0
 
 dev_dependencies:
