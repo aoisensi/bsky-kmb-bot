@@ -134,7 +134,14 @@ Future<void> changeIcon() async {
   final response = await http.get(Uri.parse(url));
   print("Uploading icon...");
   final blob = await bsky.repo.uploadBlob(response.bodyBytes);
-  await bsky.actor.profile(avatar: blob.data.blob);
+  await bsky.actor.profile(
+    displayName: "キルミーベイベーbot (非公式)",
+    avatar: blob.data.blob,
+    description: """1. 機能を使いたかったらフォローしてね！フォロー返しされたら登録完了！
+2. 投稿数が686の倍数に到達するとお知らせするよ！
+3. キルミー関係のワードをつぶやくとLikeするよ！
+4. いらなくなったらブロックしてね！""",
+  );
   print("Changed icon!!");
 }
 
