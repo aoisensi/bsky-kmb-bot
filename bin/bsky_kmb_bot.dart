@@ -39,17 +39,20 @@ Future<void> main(List<String> arguments) async {
       _follows[follow.did] = follow.viewer.following!;
     }
   }
-  final subscribe = await bsky.sync.subscribeRepos();
+  while (true) {
+    final subscribe = await bsky.sync.subscribeRepos();
 
-  print("Listening to commits...");
-  await for (final event in subscribe.data.stream) {
-    event.when(
-        commit: repoCommitAdapter.execute,
-        handle: (data) {},
-        migrate: (data) {},
-        tombstone: (data) {},
-        info: (data) {},
-        unknown: (data) {});
+    print("Listening to commits...");
+    await for (final event in subscribe.data.stream) {
+      event.when(
+          commit: repoCommitAdapter.execute,
+          handle: (data) {},
+          migrate: (data) {},
+          tombstone: (data) {},
+          info: (data) {},
+          unknown: (data) {});
+    }
+    print("Reconnecting...");
   }
 }
 
