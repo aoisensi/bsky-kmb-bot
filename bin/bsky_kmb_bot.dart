@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:bluesky/bluesky.dart' as bluesky;
 import 'package:bluesky_text/bluesky_text.dart';
-import 'package:cron/cron.dart';
+// import 'package:cron/cron.dart';
 import 'package:http/http.dart' as http;
 import 'package:fullwidth_halfwidth_converter/fullwidth_halfwidth_converter.dart';
 
@@ -11,7 +11,7 @@ late final String myDid;
 late final bluesky.Bluesky bsky;
 final _follows = <String, bluesky.AtUri>{};
 final rand = Random();
-final cron = Cron();
+// final cron = Cron();
 
 Future<void> main(List<String> arguments) async {
   final identifier = Platform.environment["BSKY_KMB_BOT_ID"];
@@ -30,7 +30,7 @@ Future<void> main(List<String> arguments) async {
     print("I am $myDid");
   }
   {
-    cron.schedule(Schedule.parse("0 * * * *"), changeIcon);
+    // cron.schedule(Schedule.parse("0 * * * *"), changeIcon);
   }
   {
     print("Getting following...");
@@ -45,12 +45,13 @@ Future<void> main(List<String> arguments) async {
     print("Listening to commits...");
     await for (final event in subscribe.data.stream) {
       event.when(
-          commit: repoCommitAdapter.execute,
-          handle: (data) {},
-          migrate: (data) {},
-          tombstone: (data) {},
-          info: (data) {},
-          unknown: (data) {});
+        commit: repoCommitAdapter.execute,
+        handle: (data) {},
+        migrate: (data) {},
+        tombstone: (data) {},
+        info: (data) {},
+        unknown: (data) {},
+      );
     }
     print("Reconnecting...");
   }
@@ -137,16 +138,12 @@ Future<void> changeIcon() async {
   final response = await http.get(Uri.parse(url));
   print("Uploading icon...");
   final blob = await bsky.repo.uploadBlob(response.bodyBytes);
-  final description = """1. 機能を使いたかったらフォローしてね！フォロー返しされたら登録完了！
-2. 投稿数が686の倍数に到達するとお知らせするよ！
-3. キルミー関係のワードをつぶやくとLikeするよ！
-4. いらなくなったらブロックしてね！
 
-作者: @aoisensi.info""";
+  final old = await bsky.actor.getProfile(actor: myDid);
   await bsky.actor.profile(
-    displayName: "キルミーベイベーbot (非公式)",
+    displayName: old.data.displayName,
     avatar: blob.data.blob,
-    description: description,
+    description: old.data.description,
   );
   print("Changed profile!!");
 }
