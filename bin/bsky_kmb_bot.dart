@@ -75,7 +75,7 @@ final repoCommitAdapter = bluesky.RepoCommitAdaptor(
   },
   onCreatePost: (data) async {
     if (!_follows.containsKey(data.author)) return;
-    print("Posted from ${data.author}");
+    print("Posted ${data.cid} from ${data.author}");
     final profile = await bsky.actor.getProfile(actor: data.author);
     final count = profile.data.postsCount;
     if (count != 0 && count % 686 == 0) {
