@@ -47,6 +47,7 @@ Future<void> main(List<String> arguments) async {
         _follows[follow.did] = follow.viewer.following!;
       }
       cursor = follows.data.cursor;
+      if (cursor == null) break;
     }
   }
   while (true) {
