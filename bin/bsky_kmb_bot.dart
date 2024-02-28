@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:bluesky/bluesky.dart' as bluesky;
 import 'package:bluesky_text/bluesky_text.dart';
-// import 'package:cron/cron.dart';
+import 'package:cron/cron.dart';
 import 'package:http/http.dart' as http;
 import 'package:fullwidth_halfwidth_converter/fullwidth_halfwidth_converter.dart';
 
@@ -11,7 +11,7 @@ late final String myDid;
 late final bluesky.Bluesky bsky;
 final _follows = <String, bluesky.AtUri>{};
 final rand = Random();
-// final cron = Cron();
+final cron = Cron();
 
 Future<void> main(List<String> arguments) async {
   final identifier = Platform.environment["BSKY_KMB_BOT_ID"];
@@ -30,13 +30,23 @@ Future<void> main(List<String> arguments) async {
     print("I am $myDid");
   }
   {
-    // cron.schedule(Schedule.parse("0 * * * *"), changeIcon);
+    cron.schedule(Schedule.parse("0 * * * *"), changeIcon);
   }
   {
     print("Getting following...");
-    final follows = await bsky.graph.getFollows(actor: myDid);
-    for (final follow in follows.data.follows) {
-      _follows[follow.did] = follow.viewer.following!;
+    String? cursor;
+    while (true) {
+      print("Getting following with cursor $cursor");
+      final follows = await bsky.graph.getFollows(
+        actor: myDid,
+        limit: 100,
+        cursor: cursor,
+      );
+      if (follows.data.follows.isEmpty) break;
+      for (final follow in follows.data.follows) {
+        _follows[follow.did] = follow.viewer.following!;
+      }
+      cursor = follows.data.cursor;
     }
   }
   while (true) {
@@ -75,7 +85,7 @@ final repoCommitAdapter = bluesky.RepoCommitAdaptor(
   },
   onCreatePost: (data) async {
     if (!_follows.containsKey(data.author)) return;
-    print("Posted ${data.cid} from ${data.author}");
+    print("Posted ${data.cid} from (${data.author})");
     final profile = await bsky.actor.getProfile(actor: data.author);
     final count = profile.data.postsCount;
     if (count != 0 && count % 686 == 0) {
